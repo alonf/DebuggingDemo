@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using NetMQ;
 using NetMQ.Sockets;
@@ -23,7 +19,7 @@ namespace ClientSide
 
             using (var client = new RequestSocket(">tcp://localhost:5556")) // connect
             {
-                Parallel.For(1, 100, i =>
+                Parallel.For(1, 20000, i =>
                 {
                     // ReSharper disable once AccessToDisposedClosure
                     SendAMessage(zeroMqLock, client, i);
@@ -38,11 +34,9 @@ namespace ClientSide
             string msg;
             lock (zeroMqLock)
             {
-                client.SendFrame($"Msg {i}");
+                client.SendFrame($"{i}");
                 msg = client.ReceiveFrameString();
             }
-            if (i == 20)
-                Debugger.Break();
 
             Console.WriteLine($"From Server: {msg}");
         }
